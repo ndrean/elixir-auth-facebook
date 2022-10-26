@@ -167,7 +167,7 @@ In the "page" controller that renders the template above, add the code below:
 # lib/app_web/controllers/page_controller.ex
 
 defmodule AppWeb.PageController do
-  use Phoenix.Controller
+  use AppWeb, :controller
 
   def index(conn, _p) do
     oauth_facebook_url =
@@ -207,7 +207,7 @@ Last step! We finally need a controller to respond to the endpoint:
 # lib/app_web/controllers/facebook_auth_controller.ex
 
 defmodule AppWeb.FacebookAuthController do
-  use Phoenix.Controller
+  use AppWeb, :controller
 
   def login(conn, params) do
 
