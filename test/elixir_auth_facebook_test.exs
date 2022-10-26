@@ -174,6 +174,15 @@ defmodule ElixirAuthFacebookTest do
   test "chaining errors" do
     conn = %Plug.Conn{host: "localhost", port: 4000, assigns: %{data: %{"access_token" => "A"}}}
 
+    assert ElixirAuthFacebook.get_data(conn).assigns == %{
+             access_token: "A",
+             data: %{"is_valid" => nil},
+             is_valid: nil
+           }
+
+    assert ElixirAuthFacebook.get_data(conn) |> ElixirAuthFacebook.get_profile() ==
+             {:error, {:get_profile2, "renew your credentials"}}
+
     assert ElixirAuthFacebook.get_data(conn)
            |> ElixirAuthFacebook.get_profile()
            |> ElixirAuthFacebook.check_profile() ==
@@ -190,10 +199,9 @@ defmodule ElixirAuthFacebookTest do
   end
 
   test "handle user positive" do
-    assert ElixirAuthFacebook.handle_callback(%Plug.Conn{host: "localhost", port: 4000}, %{
-             "state" => "1234",
-             "code" => "code"
-           }) ==
+    conn = %Plug.Conn{host: "localhost", port: 4000}
+
+    assert ElixirAuthFacebook.handle_callback(conn, %{"state" => "1234", "code" => "code"}) ==
              {:ok,
               %{
                 access_token: "AT",
@@ -209,6 +217,19 @@ defmodule ElixirAuthFacebookTest do
                 }
               }}
   end
+
+  # test "positive" do
+  #   conn = %Plug.Conn{host: "localhost", port: 4000, assigns: %{data: %{"access_token" => "AT"}}}
+
+  #   assert ElixirAuthFacebook.get_data(conn).assigns == %{
+  #            access_token: "AT",
+  #            data: %{"app_id" => "1234", "is_valid" => "true"},
+  #            is_valid: "true"
+  #          }
+
+  #   data = ElixirAuthFacebook.get_data(conn) |> ElixirAuthFacebook.get_profile()
+  #   assert data.assigns.is_valid == "true"
+  # end
 
   test "handle user deny dialog" do
     assert ElixirAuthFacebook.handle_callback(%Plug.Conn{}, %{"error" => "ok"}) ==
