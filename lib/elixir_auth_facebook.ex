@@ -119,24 +119,20 @@ defmodule ElixirAuthFacebook do
     URI.encode_query(%{"access_token" => token})
     |> graph_api()
     |> decode_response()
-    |> then(fn data ->
-      assign(conn, :profile, data)
+    |> then(fn profile ->
+      assign(conn, :profile, profile)
     end)
   end
 
   # cleaning the received user's profile
   def check_profile({:error, message}), do: {:error, {:check_profile, message}}
 
-  def check_profile(%Plug.Conn{
-        assigns: %{access_token: token, profile: profile}
-      }) do
-    profile =
-      profile
-      |> nice_map()
-      |> Map.put(:access_token, token)
-      |> exchange_id()
-
-    {:ok, profile}
+  def check_profile(%Plug.Conn{assigns: %{access_token: token, profile: profile}}) do
+    {:ok,
+     profile
+     |> nice_map()
+     |> Map.put(:access_token, token)
+     |> exchange_id()}
   end
 
   # ------ Retrieve App Credentials from ENV or CONFIG ir RAISE -----
