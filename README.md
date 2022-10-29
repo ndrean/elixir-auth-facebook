@@ -230,7 +230,6 @@ It eventually sends back the object below which identifies the user :eyes:
 
 ```elixir
 %{
-  access_token: "EAAFNaUA6VI8BAPkCCVV6q0U0tf7...",
   email: "xxxxx",
   fb_id: "10223726006128074",
   name: "Harry Potter",
@@ -245,10 +244,8 @@ It eventually sends back the object below which identifies the user :eyes:
 }
 ```
 
-A long-term "access_token" is delivered.
-The app can interact with the Facebook ecosystem on behalf of the user with this token. These tokens should be saved in the database and appended to a session. If you intend to do so, have a look at the data deletion policy at the end.
-
-> If you simply need to authenticate a user, this token is useless and everything is fine.
+> **Note**: this module doesn't deliver an access token to interact with Facebook ecosystem.
+> It simply identifies the user through Facebook
 
 ### A note on SSL certificate :lock:
 
