@@ -64,7 +64,8 @@ defmodule ElixirAuthFacebookTest do
     fb_access_token = "https://graph.facebook.com/v15.0/oauth/access_token?"
 
     assert ElixirAuthFacebook.access_token_uri("123", conn) ==
-             "https://graph.facebook.com/v15.0/oauth/access_token?client_id=1234&client_secret=ABCD&code=123&redirect_uri=http%3A%2F%2Flocalhost%3A4000%2Fauth%2Ffacebook%2Fcallback"
+             fb_access_token <>
+               "client_id=1234&client_secret=ABCD&code=123&redirect_uri=http%3A%2F%2Flocalhost%3A4000%2Fauth%2Ffacebook%2Fcallback"
 
     fb_profile = "https://graph.facebook.com/v15.0/me?fields=id,email,name,picture"
 
@@ -141,10 +142,14 @@ defmodule ElixirAuthFacebookTest do
   end
 
   test "errors" do
+    conn = %Plug.Conn{host: "localhost", port: 4000}
+
+    assert ElixirAuthFacebook.handle_callback(conn, %{"state" => "1234", "code" => "bad"}) ==
+             {:error, {:check_profile, {:get_profile, "Invalid verification code format."}}}
+
     conn = %Plug.Conn{host: "localhost", port: 4000, assigns: %{data: %{"access_token" => "A"}}}
 
-    assert ElixirAuthFacebook.get_profile(conn)
-           |> ElixirAuthFacebook.check_profile() ==
+    assert ElixirAuthFacebook.handle_callback(conn, %{"state" => "1234", "code" => "bad_at"}) ==
              {:error, {:check_profile2, "bad profile"}}
   end
 

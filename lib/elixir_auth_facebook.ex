@@ -101,7 +101,6 @@ defmodule ElixirAuthFacebook do
 
   # Generates the Graph API url to query for users data.
   def graph_api(access), do: @fb_profile <> "&" <> access
-  # ????????
 
   # ------ Private Helpers -------------
 

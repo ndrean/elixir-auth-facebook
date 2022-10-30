@@ -7,6 +7,25 @@ defmodule HTTPoisonMock do
   @app_secret Application.compile_env(:elixir_auth_facebook, :app_secret)
 
   @http "http%3A%2F%2Flocalhost%3A4000%2Fauth%2Ffacebook%2Fcallback"
+
+  @bad_code_exchange "https://graph.facebook.com/v15.0/oauth/access_token?client_id=#{@app_id}&client_secret=#{@app_secret}&code=bad&redirect_uri=#{@http}"
+  def get!(@bad_code_exchange) do
+    %{
+      host: "localhost",
+      port: 4000,
+      body: Jason.encode!(%{"error" => %{"message" => "Invalid verification code format."}})
+    }
+  end
+
+  @bad_at "https://graph.facebook.com/v15.0/oauth/access_token?client_id=#{@app_id}&client_secret=#{@app_secret}&code=bad_at&redirect_uri=#{@http}"
+  def get!(@bad_at) do
+    %{
+      host: "localhost",
+      port: 4000,
+      body: Jason.encode!(%{"access_token" => "A"})
+    }
+  end
+
   @url_http_exchange "https://graph.facebook.com/v15.0/oauth/access_token?client_id=#{@app_id}&client_secret=#{@app_secret}&code=code&redirect_uri=#{@http}"
 
   def get!(@url_http_exchange) do
