@@ -1,1 +1,6 @@
 /.elixir_ls
+/_build
+/deps
+/cover
+/doc
+/.VSCodeCounter
